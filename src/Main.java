@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -25,11 +26,13 @@ public class Main extends Application {
     int punktid = 0;
     int tase = 1;
     Pane laud = new Pane();
+    Group ussiKeha = new Group();
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.show();
 
-
+        laud.getChildren().add(ussiKeha);
         Scene gameScene = new Scene(laud,laius,laius);
         primaryStage.setScene(gameScene);
 
@@ -79,22 +82,21 @@ public class Main extends Application {
                 counter = 0;
                 peaX += vektorX;
                 peaY += vektorY;
-                uusPea(peaX, peaY);
-                /*
-                if (oun.getCenterX() == pea.getCenterX() && oun.getCenterY() == pea.getCenterY()){
+
+                if (oun.getCenterX() == peaX && oun.getCenterY() == peaY){
                     paigutaOun();
                     punktid = punktid + 1;
                     System.out.println(punktid);
                     tase = tase + 1;
                     String p = Integer.toString(punktid);
                     punktidLabel.setText(p);
+                    uusPea(peaX, peaY, true);
+                } else {
+                    uusPea(peaX, peaY, false);
                 }
-                if (pea.getCenterY() > 495 || 5 > pea.getCenterY() || pea.getCenterX() > 495 || 5 > pea.getCenterX() ){
-                    laud.getChildren().remove(pea);
-                    Circle pea = algus(laud);
-
+                if (peaY > 495 || 5 > peaY || peaX > 495 || 5 > peaX ){
+                    System.out.println("GAMEOVER");
                 }
-*/
 
 
             }
@@ -106,12 +108,14 @@ public class Main extends Application {
 
     }
 
-    private void uusPea(int x, int y){
+    private void uusPea(int x, int y, boolean skipDelete){
         System.out.println("uus jupp " + x + "-" + y);
         Circle jupp = new Circle(5);
         jupp.setCenterX(x);
         jupp.setCenterY(y);
-        laud.getChildren().add(jupp);
+        ussiKeha.getChildren().add(jupp);
+        if (ussiKeha.getChildren().size() > 1 && skipDelete == false)
+            ussiKeha.getChildren().remove(0, 1);
     }
 
     private void paigutaOun() {

@@ -1,59 +1,128 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
-public class Main {
-    public static void main(String args[]) {
-        System.out.println("IT IS USS TIME!");
-        System.out.println("Autor: Ingvar Kassuk");
-        System.out.println("Aasta: 2016");
+import java.util.Random;
 
-        int[][] laud = new int [10][10];
-        int[] uss = {5 , 5};
-        int[] oun = {7 , 7};
+public class Main extends Application {
+    Circle oun = new Circle(5);
+    private int laius = 500;
+    Label punktidLabel = new Label();
 
-        Scanner sc = new Scanner(System.in);
-        while(true){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    int vektorX = 0;
+    int vektorY = 0;
+    int counter = 0;
+    int punktid = 0;
+    int tase = 1;
 
-            String suund = sc.nextLine();
-            if(suund.equals("s")) {
-                uss[1]++;
-            }
-            if(suund.equals("w")) {
-                uss[1]--;
-            }
-            if(suund.equals("d")){
-                uss[0]++;
-            }
-            if(suund.equals("a")){
-                uss[0]--;
-            }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.show();
+        Pane laud = new Pane();
 
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    int[] preagu = {j, i};
-                    if (Arrays.equals(uss, preagu)) {
-                        System.out.print('U');
-                    } else if (Arrays.equals(oun, preagu)){
-                        System.out.print('O');
-                    } else {
-                        System.out.print('-');
-                    }
+        Scene gameScene = new Scene(laud,laius,laius);
+        primaryStage.setScene(gameScene);
+
+        gameScene.setOnKeyPressed(event -> {
+            if (vektorY != 0) {
+                if(event.getCode() == KeyCode.RIGHT){
+                    vektorX = +10;
+                    vektorY = 0;
+                } else if (event.getCode() == KeyCode.LEFT) {
+                    vektorX = -10;
+                    vektorY = 0;
                 }
-                System.out.println();
+            } else {
+                if(event.getCode() == KeyCode.DOWN){
+                    vektorY = +10;
+                    vektorX = 0;
+                } else if (event.getCode() == KeyCode.UP){
+                    vektorY = -10;
+                    vektorX = 0;
+                }
             }
-            System.out.println();
-        }
+        });
 
 
-        // 0 = tühjus
-        // 1 = uss
+        Circle pea = algus(laud);
+
+        laud.getChildren().add(oun);
+        paigutaOun();
+        oun.setFill(Color.RED);
+
+        Rectangle piire = new Rectangle(0, 0, 500, 500 );
+        piire.setFill(Color.TRANSPARENT);
+        piire.setStroke(Color.BLACK);
+        piire.setStrokeWidth(5);
+        laud.getChildren().add(piire);
+
+        laud.getChildren().add(punktidLabel);
+
+
+
+
+        System.out.println("START");
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                double aeg = 20 - tase / 2;
+                aeg = Math.max(aeg, 0.00000000000001);
+                if (counter != aeg){
+                   counter = counter +1;
+                    return;
+                }
+                counter = 0;
+                pea.setCenterX(pea.getCenterX() + vektorX);
+                pea.setCenterY(pea.getCenterY() + vektorY);
+                if (oun.getCenterX() == pea.getCenterX() && oun.getCenterY() == pea.getCenterY()){
+                    paigutaOun();
+                    punktid = punktid + 1;
+                    System.out.println(punktid);
+                    tase = tase + 1;
+                    String p = Integer.toString(punktid);
+                    punktidLabel.setText(p);
+                }
+                if (pea.getCenterY() > 495 || 5 > pea.getCenterY() || pea.getCenterX() > 495 || 5 > pea.getCenterX() ){
+                    laud.getChildren().remove(pea);
+                    Circle pea = algus(laud);
+
+                }
+
+
+
+            }
+
+        }.start();
+        System.out.println("END");
 
 
 
     }
+
+    private Circle algus(Pane laud) {
+        Circle pea = new Circle(5);
+        pea.setCenterX(250);
+        pea.setCenterY(250);
+        laud.getChildren().add(pea);
+        return pea;
+    }
+
+    private void paigutaOun() {
+        Random pos1 = new Random();
+        Random pos2 = new Random();
+
+        int n = pos1.nextInt (49) +1 ;
+        int m = pos2.nextInt (49) +1 ;
+        oun.setCenterX(n * 10);
+        oun.setCenterY(m * 10);
+    }
 }
+// pea pendeldamine, ääred ja miks 21 kokku paneb

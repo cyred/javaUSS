@@ -16,17 +16,19 @@ public class Main extends Application {
     Circle oun = new Circle(5);
     private int laius = 500;
     Label punktidLabel = new Label();
+    int peaX = 250;
+    int peaY = 250;
 
     int vektorX = 0;
     int vektorY = 0;
     int counter = 0;
     int punktid = 0;
     int tase = 1;
-
+    Pane laud = new Pane();
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.show();
-        Pane laud = new Pane();
+
 
         Scene gameScene = new Scene(laud,laius,laius);
         primaryStage.setScene(gameScene);
@@ -51,9 +53,6 @@ public class Main extends Application {
             }
         });
 
-
-        Circle pea = algus(laud);
-
         laud.getChildren().add(oun);
         paigutaOun();
         oun.setFill(Color.RED);
@@ -67,8 +66,6 @@ public class Main extends Application {
         laud.getChildren().add(punktidLabel);
 
 
-
-
         System.out.println("START");
         new AnimationTimer() {
             @Override
@@ -80,8 +77,10 @@ public class Main extends Application {
                     return;
                 }
                 counter = 0;
-                pea.setCenterX(pea.getCenterX() + vektorX);
-                pea.setCenterY(pea.getCenterY() + vektorY);
+                peaX += vektorX;
+                peaY += vektorY;
+                uusPea(peaX, peaY);
+                /*
                 if (oun.getCenterX() == pea.getCenterX() && oun.getCenterY() == pea.getCenterY()){
                     paigutaOun();
                     punktid = punktid + 1;
@@ -95,7 +94,7 @@ public class Main extends Application {
                     Circle pea = algus(laud);
 
                 }
-
+*/
 
 
             }
@@ -107,12 +106,12 @@ public class Main extends Application {
 
     }
 
-    private Circle algus(Pane laud) {
-        Circle pea = new Circle(5);
-        pea.setCenterX(250);
-        pea.setCenterY(250);
-        laud.getChildren().add(pea);
-        return pea;
+    private void uusPea(int x, int y){
+        System.out.println("uus jupp " + x + "-" + y);
+        Circle jupp = new Circle(5);
+        jupp.setCenterX(x);
+        jupp.setCenterY(y);
+        laud.getChildren().add(jupp);
     }
 
     private void paigutaOun() {

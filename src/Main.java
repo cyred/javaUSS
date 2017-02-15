@@ -5,26 +5,31 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.Random;
 
 public class Main extends Application {
+    AnimationTimer timer;
     Circle oun = new Circle(5);
     private int laius = 500;
-    Label punktidLabel = new Label();
+    Label punktidLabel = new Label("0");
+    Label punktidLabel2 = new Label("0");
     int peaX = 250;
     int peaY = 250;
 
     int vektorX = 0;
-    int vektorY = 0;
+    int vektorY = -10;
     int counter = 0;
     int punktid = 0;
     int tase = 1;
+    StackPane stack = new StackPane();
     Pane laud = new Pane();
     Group ussiKeha = new Group();
 
@@ -33,7 +38,8 @@ public class Main extends Application {
         primaryStage.show();
 
         laud.getChildren().add(ussiKeha);
-        Scene gameScene = new Scene(laud,laius,laius);
+        stack.getChildren().add(laud);
+        Scene gameScene = new Scene(stack,laius,laius);
         primaryStage.setScene(gameScene);
 
         gameScene.setOnKeyPressed(event -> {
@@ -60,17 +66,27 @@ public class Main extends Application {
         paigutaOun();
         oun.setFill(Color.RED);
 
+        uusPea(250, 270, true);
+        uusPea(250, 260, true);
+        uusPea(250, 250, true);
         Rectangle piire = new Rectangle(0, 0, 500, 500 );
         piire.setFill(Color.TRANSPARENT);
         piire.setStroke(Color.BLACK);
         piire.setStrokeWidth(5);
-        laud.getChildren().add(piire);
+        stack.getChildren().add(piire);
 
-        laud.getChildren().add(punktidLabel);
+        stack.getChildren().add(0, punktidLabel);
+        punktidLabel.setScaleX(150);
+        punktidLabel.setScaleY(100);
+        punktidLabel.setTextFill(Color.grayRgb(220));
+        stack.getChildren().add(1, punktidLabel2);
+        punktidLabel2.setScaleX(24);
+        punktidLabel2.setScaleY(24);
+        punktidLabel2.setTextFill(Color.grayRgb(200));
 
 
         System.out.println("START");
-        new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 double aeg = 20 - tase / 2;
@@ -80,7 +96,7 @@ public class Main extends Application {
                     return;
                 }
                 counter = 0;
-                peaX += vektorX;
+                peaX = peaX + vektorX;
                 peaY += vektorY;
 
                 if (oun.getCenterX() == peaX && oun.getCenterY() == peaY){
@@ -90,18 +106,27 @@ public class Main extends Application {
                     tase = tase + 1;
                     String p = Integer.toString(punktid);
                     punktidLabel.setText(p);
+                    punktidLabel2.setText(p);
                     uusPea(peaX, peaY, true);
                 } else {
                     uusPea(peaX, peaY, false);
                 }
                 if (peaY > 495 || 5 > peaY || peaX > 495 || 5 > peaX ){
                     System.out.println("GAMEOVER");
+                    timer.stop();
+                    Label m2ngL2bi = new Label("Mäng Läbi\nLuuservitt");
+                    m2ngL2bi.setTextAlignment(TextAlignment.CENTER);
+                    m2ngL2bi.setScaleX(8);
+                    m2ngL2bi.setScaleY(8);
+                    m2ngL2bi.setRotate(6);
+                    stack.getChildren().add(m2ngL2bi);
                 }
 
 
             }
 
-        }.start();
+        };
+        timer.start();
         System.out.println("END");
 
 
